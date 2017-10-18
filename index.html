@@ -1,22 +1,30 @@
 <html>
   <head>
     <title>Dinner bill splitter</title>
-    <meta content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        input {  margin: auto 0.5em; width: 5em; }
+        input {  margin: auto 0.5em; width: 4em; font-size: 100%; }
+        fieldset{
+            border: solid 1px blue;
+            float:left;
+            border-radius: 4px;
+        }
+        body { witdth: 100%; font-size: 110%;}
+        .left { float: left; }
+        .clear { clear: both; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/ractive"></script>     
     <script>
         function init() {
             var data = {
+                subtotal: 0,
                 total: 0,
-                totalWithDiscount: 0,
                 discountRatio: 'N/A',
                 persons: [],
                 sumByPersons: 0
             };
             for (var i=0; i<6; i++) {
-                data.persons.push({name: i+1, total: 0, totalWithDiscount: 0});
+                data.persons.push({name: i+1, subtotal: 0, total: 0});
             }
             
             var ractive = new Ractive({
@@ -25,16 +33,16 @@
                 data: data
             });
             
+            ractive.observe('subtotal', recalc);
             ractive.observe('total', recalc);
-            ractive.observe('totalWithDiscount', recalc);
-            ractive.observe('persons', recalc);            
+            ractive.observe('persons', recalc);
             
             function recalc() { 
-                var discountRatio = (data.totalWithDiscount && data.total) ? data.totalWithDiscount / data.total : 'N/A';
+                var discountRatio = (data.total && data.subtotal) ? data.total / data.subtotal : 'N/A';
                 for (i = 0; i < data.persons.length; i++) { 
                     var person = data.persons[i];
-                    person.totalWithDiscount = (person.total && discountRatio) ? person.total * discountRatio : 'N/A';
-                    data.sumByPersons += person.total;
+                    person.total = (person.subtotal && discountRatio) ? person.subtotal * discountRatio : 'N/A';
+                    data.sumByPersons += person.subtotal;
                 }    
                 ractive.set('discountRatio', discountRatio);               
                 ractive.set('persons', data.persons);               
@@ -45,25 +53,25 @@
     </script>
 
     <script id="template" type="text/ractive">
-        <div>
-            <label>
-                Total: <input  type="number" value='{{total}}' required min="0" step="1">
-            </label>
-            <label>
-                Total with discount: <input type="number" value='{{totalWithDiscount}}' required min="0" step="1">
-            </label>
-            Discount ratio: {{discountRatio}}
-        </div>
+        <label class="float">
+            Subtotal: <input  type="number" value='{{subtotal}}' required min="0" step="1">
+        </label>
+        <label class="float">
+            Total: <input type="number" value='{{total}}' required min="0" step="1">
+        </label>
+        <p class="float">Discount ratio: {{discountRatio}}</p>
         {{#each persons}}
-            <fieldset>
-            <legend>Person {{name}}</legend>            
-            <label>
-                Total: <input  type="number" value='{{total}}' required min="0" step="1">
-            </label>
-            Total with discount: {{totalWithDiscount}}
-            </fieldset>
+            <div class="clear">
+                <fieldset>
+                <legend>Person {{name}}</legend>
+                <label>
+                    Subtotal: <input  type="number" value='{{subtotal}}' required min="0" step="1">
+                </label>
+                Total: {{total}}
+                </fieldset>
+            </div>
         {{/each}}
-        <p>Total sum by persons: {{sumByPersons}}</p>
+        <div class="clear">Subtotal sum by persons: {{sumByPersons}}</div>
     </script>
 
   </head>
