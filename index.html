@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <style>body {margin: 1em;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/ractive"></script>     
+    <script>
+        function init() {
+            var data = {
+                total: 0,
+                totalWithDiscount: 0,
+                discountRatio: 'N/A',
+                persons: [],
+                sumByPersons: 0
+            };
+            for (var i=0; i<6; i++) {
+                data.persons.push({name: i, total: 0, totalWithDiscount: 0});
+            }
+            
+            var ractive = new Ractive({
+                target: '#target',
+                template: '#template',
+                data: data
+            });
+            
+            ractive.observe('total', function ( newValue, oldValue ) {
+                recalc();                
+            });
+            ractive.observe('totalWithDiscount', function ( newValue, oldValue ) {
+                recalc();
+            });
+            ractive.observe('persons', function ( newValue, oldValue ) {
+                recalc();
+            });            
+            
+            function recalc() { 
+                var discountRatio = (data.totalWithDiscount && data.total) ? data.totalWithDiscount / data.total : 'N/A';
+                for (i = 0; i < data.persons.length; i++) { 
+                    var person = data.persons[i];
+                    person.totalWithDiscount = (person.total && discountRatio) ? person.total * discountRatio : 'N/A';
+                    data.sumByPersons += person.total;
+                }    
+                ractive.set('discountRatio', discountRatio);               
+                ractive.set('persons', data.persons);               
+                ractive.set('sumByPersons', data.sumByPersons);               
+            }
+        }
+      
+    </script>
+
+    <script id="template" type="text/ractive">
+        <label>
+            Total: <input  type="number" value='{{total}}' required min="0" step=".01">
+        </label>
+        <label>
+            Total with discount: <input type="number" value='{{totalWithDiscount}}' required min="0" step=".01">
+        </label>        
+        Discount ratio: {{discountRatio}}
+        {{#each persons}}
+            <fieldset>
+            <legend>Person {{name}}</legend>            
+            <label>
+                Total: <input  type="number" value='{{total}}' required min="0" step=".01">
+            </label>
+            Total with discount: {{totalWithDiscount}}
+            </fieldset>
+        {{/each}}
+        Total sum by persons: {{sumByPersons}}
+    </script>
+
+  </head>
+  
+  <body onload="init();">
+    <div id="target"></div>
+  </body>
+</html>
