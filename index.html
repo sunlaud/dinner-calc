@@ -1,9 +1,9 @@
 <html>
   <head>
-    <title>Dinner bill splitter</title>
+    <title>Dinner bill calculator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        input {  margin: auto 0.5em; width: 4em; font-size: 100%; }
+        input {  margin-right: 0.2em; width: 3em; font-size: 100%; }
         fieldset{
             border: solid 1px blue;
             float:left;
@@ -21,7 +21,8 @@
                 total: 0,
                 discountRatio: 'N/A',
                 persons: [],
-                sumByPersons: 0
+                subtotalSumByPersons: 0,
+                totalSumByPersons: 0
             };
             for (var i=0; i<6; i++) {
                 data.persons.push({name: i+1, subtotal: 0, total: 0});
@@ -37,16 +38,19 @@
             ractive.observe('total', recalc);
             ractive.observe('persons', recalc);
             
-            function recalc() { 
-                var discountRatio = (data.total && data.subtotal) ? data.total / data.subtotal : 'N/A';
-                for (i = 0; i < data.persons.length; i++) { 
+            function recalc() {
+                data.subtotal = data.subtotal || 0;
+                data.total = data.total || 0;
+                data.discountRatio = data.total / data.subtotal; //possible NaN here
+                data.subtotalSumByPersons = data.totalSumByPersons = 0;
+                for (i = 0; i < data.persons.length; i++) {
                     var person = data.persons[i];
-                    person.total = (person.subtotal && discountRatio) ? person.subtotal * discountRatio : 'N/A';
-                    data.sumByPersons += person.subtotal;
-                }    
-                ractive.set('discountRatio', discountRatio);               
-                ractive.set('persons', data.persons);               
-                ractive.set('sumByPersons', data.sumByPersons);               
+                    person.subtotal = person.subtotal || 0;
+                    person.total = person.subtotal * data.discountRatio;
+                    data.subtotalSumByPersons += person.subtotal;
+                    data.totalSumByPersons += person.total;
+                }
+                ractive.update();
             }
         }
       
@@ -59,7 +63,7 @@
         <label class="float">
             Total: <input type="number" value='{{total}}' required min="0" step="1">
         </label>
-        <p class="float">Discount ratio: {{discountRatio}}</p>
+        <p class="float">Discount ratio: {{isNaN(discountRatio) ? 'N/A' : discountRatio.toFixed(3)}}</p>
         {{#each persons}}
             <div class="clear">
                 <fieldset>
@@ -67,17 +71,18 @@
                 <label>
                     Subtotal: <input  type="number" value='{{subtotal}}' required min="0" step="1">
                 </label>
-                Total: {{total}}
+                Total: {{isNaN(total) ? 'N/A' : total.toFixed(1)}}
                 </fieldset>
             </div>
         {{/each}}
-        <div class="clear">Subtotal sum by persons: {{sumByPersons}}</div>
+        <div class="clear">Subtotal sum by persons: {{subtotalSumByPersons}}</div>
+        <div class="clear">Total sum by persons: {{isNaN(totalSumByPersons) ? 'N/A' : totalSumByPersons.toFixed(1)}}</div>
     </script>
 
   </head>
   
   <body onload="init();">
-    <h2>Dinner bill splitter</h2>
+    <h3>Dinner bill calculator</h3>
     <div id="target"></div>
   </body>
 </html>
