@@ -2,18 +2,18 @@
   <head>
     <title>Dinner bill calculator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/ractive"></script>
     <style>
+        html { font-size: 110%;}
         input {  margin-right: 0.2em; width: 3em; font-size: 100%; }
         fieldset{
             border: solid 1px blue;
             float:left;
             border-radius: 4px;
         }
-        body { witdth: 100%; font-size: 110%;}
         .left { float: left; }
         .clear { clear: both; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/ractive"></script>     
     <script>
         function init() {
             var data = {
@@ -65,15 +65,13 @@
         </label>
         <p class="float">Discount ratio: {{isNaN(discountRatio) ? 'N/A' : discountRatio.toFixed(3)}}</p>
         {{#each persons}}
-            <div class="clear">
-                <fieldset>
+                <fieldset class="clear">
                 <legend>Person {{name}}</legend>
                 <label>
                     Subtotal: <input  type="number" value='{{subtotal}}' required min="0" step="1">
                 </label>
                 Total: {{isNaN(total) ? 'N/A' : total.toFixed(1)}}
                 </fieldset>
-            </div>
         {{/each}}
         <div class="clear">Subtotal sum by persons: {{subtotalSumByPersons}}</div>
         <div class="clear">Total sum by persons: {{isNaN(totalSumByPersons) ? 'N/A' : totalSumByPersons.toFixed(1)}}</div>
