@@ -24,7 +24,10 @@
                 discountRatio: undefined,
                 persons: [],
                 subtotalSumByPersons: 0,
-                totalSumByPersons: 0
+                totalSumByPersons: 0,
+                formatNumber: function(number, decimalPlaces) {
+                    return isNaN(number) ? 'N/A' : number.toFixed(decimalPlaces);
+                }
             };
             for (var i=0; i<6; i++) {
                 data.persons.push({name: i+1, subtotalRaw: 0, subtotal: 0,  total: NaN});
@@ -63,18 +66,18 @@
         <label class="float">
             Total: <input type="number" value='{{total}}' required min="1" step="1">
         </label>
-        <p class="float">Discount ratio: {{isNaN(discountRatio) ? 'N/A' : discountRatio.toFixed(3)}}</p>
+        <p class="float">Discount ratio: {{formatNumber(discountRatio, 3)}}</p>
         {{#each persons}}
                 <fieldset class="clear">
                 <legend>Person {{name}}</legend>
                 <label>
-                    Subtotal: <input  type="string" pattern="\d+([\+\-\*\/]\d+)*$" value='{{subtotalRaw}}' required>={{isNaN(subtotal) ? 'N/A' : subtotal.toFixed(1)}}
+                    Subtotal: <input  type="string" pattern="\d+([\+\-\*\/]\d+)*$" value='{{subtotalRaw}}' required>={{formatNumber(subtotal, 1)}}
                 </label>
-                Total: {{isNaN(total) ? 'N/A' : total.toFixed(1)}}
+                Total: {{formatNumber(total, 1)}}
                 </fieldset>
         {{/each}}
         <div class="clear">Subtotal sum by persons: {{subtotalSumByPersons}}</div>
-        <div class="clear">Total sum by persons: {{isNaN(totalSumByPersons) ? 'N/A' : totalSumByPersons.toFixed(1)}}</div>
+        <div class="clear">Total sum by persons: {{formatNumber(totalSumByPersons, 1)}}</div>
     </script>
 
   </head>
