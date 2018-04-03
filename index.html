@@ -5,8 +5,9 @@
     <link rel="icon" href="favicon.png">
     <script src="https://cdn.jsdelivr.net/npm/ractive"></script>
     <style>
-        html { font-size: 110%;}
-        input {  margin-right: 0.2em; width: 4em; font-size: 100%; }
+        html { font-size: 100%;}
+        input {  margin-right: 0.2em; width: 3em;}
+        input.expression { width: 8em;}
         input:invalid { border: 1px red solid; }
         fieldset{
             border: solid 1px blue;
@@ -16,6 +17,7 @@
         .left { float: left; }
         .clear { clear: both; }
         p, div {margin:0.3em 0.5em 0.3em 0;}
+        legend {font-size: 80%;}
         .payed {color: green; font-weight: bold;}
         .not-fully-payed {color: red;}
     </style>
@@ -76,9 +78,7 @@
         {{#each persons}}
                 <fieldset class="clear">
                 <legend>Person {{name}}</legend>
-                <label>
-                    Subtotal: <input  type="string" pattern="\d+([\+\-\*\/]\d+)*$" value='{{subtotalRaw}}'>={{formatNumber(subtotal, 1)}}
-                </label>
+                <input type="string" pattern="\d+([\+\-\*\/]\d+)*$" value='{{subtotalRaw}}' placeholder="Subtotal" class="expression">={{formatNumber(subtotal, 1)}}
                 Total: {{formatNumber(total, 1)}}
                 </fieldset>
         {{/each}}
