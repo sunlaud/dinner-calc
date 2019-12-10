@@ -1,8 +1,25 @@
 <html>
   <head>
     <title>Dinner bill calculator</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="favicon.png">
+    <link rel="manifest" href="manifest.json">
+
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="DinnerCalc">
+    <meta name="apple-mobile-web-app-title" content="DinnerCalc">
+    <meta name="msapplication-starturl" content="/dinner-calc/">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="icon" sizes="192x192" href="/dinner-calc/favicon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/dinner-calc/favicon-192.png">
+    <link rel="icon" sizes="512x512" href="/dinner-calc/favicon-512.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/dinner-calc/favicon-512.png">
+    <link rel="icon" sizes="48x48" href="/dinner-calc/favicon-48.png">
+    <link rel="apple-touch-icon" sizes="48x48" href="/dinner-calc/favicon-48.png">
+
     <script src="https://cdn.jsdelivr.net/npm/ractive"></script>
     <style>
         html { font-size: 100%;}
@@ -22,6 +39,30 @@
         .not-fully-payed {color: red;}
     </style>
     <script>
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI notify the user they can add to home screen
+            let btnAdd = document.getElementById("installBtn");
+            btnAdd.style.display = "block";
+        });
+
+        //from here https://developers.google.com/web/fundamentals/primers/service-workers
+        if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/dinner-calc/service_worker.js').then(function(registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+        }
+
+
         var SIMPLE_ARIPHMETIC_EXPR_PATTERN = /^\d+([\+\-\*\/]\d+)*$/;
         function init() {
             var data = {
@@ -62,8 +103,26 @@
                 data.leftToPay = data.total - data.totalSumByPersons;
                 ractive.update();
             }
+
+
+            let btnAdd = document.getElementById("installBtn")
+            btnAdd.addEventListener('click', (e) => {
+            // hide our user interface that shows our A2HS button
+            btnAdd.style.display = 'none';
+            // Show the prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice
+                .then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
+                } else {
+                    console.log('User dismissed the A2HS prompt');
+                }
+                deferredPrompt = null;
+                });
+            });
         }
-      
     </script>
 
     <script id="template" type="text/ractive">
@@ -87,6 +146,7 @@
   </head>
   
   <body onload="init();">
+    <button id="installBtn" style="width: 100%; display: none;">Install as an application</button>
     <h3>Dinner bill calculator</h3>
     <div id="target"></div>
   </body>
