@@ -154,7 +154,7 @@
         {{#each persons}}
                 <fieldset class="clear">
                 <legend>Person {{name}}</legend>
-                <input type="string" pattern="\d+([\+\-\*\/]\d+)*$" value='{{subtotalRaw}}' placeholder="Subtotal" class="expression with-icon"><i class="icon fa" data-tooltip="The price without discount. Supports ariphmetic expressions, e.g.: 20+3*10" data-tooltip-location="bottom"></i>={{formatNumber(subtotal, 1)}}
+                <input type="tel" pattern="\d+([\+\-\*\/]\d+)*$" value='{{subtotalRaw}}' placeholder="Subtotal" class="expression with-icon"><i class="icon fa" data-tooltip="The price without discount. Supports ariphmetic expressions, e.g.: 20+3*10" data-tooltip-location="bottom"></i>={{formatNumber(subtotal, 1)}}
 
                 <span style="font-weight: bold;">To pay: {{formatNumber(total, 1)}}</span>
                 </fieldset>
