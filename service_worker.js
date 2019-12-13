@@ -1,12 +1,15 @@
 //from here https://developers.google.com/web/fundamentals/primers/service-workers
 
-var CACHE_NAME = 'dinnercalc-cache-v1';
+var CACHE_NAME = 'dinnercalc-cache-v1.1';
 var urlsToCache = [
 '/dinner-calc/',
 '/dinner-calc/favicon-48.png',
 '/dinner-calc/favicon-192.png',
 '/dinner-calc/favicon-512.png',
+'/dinner-calc/tooltip.css',
 'https://cdn.jsdelivr.net/npm/ractive',
+'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
+'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0',
 ];
 
 
@@ -56,6 +59,7 @@ self.addEventListener('activate', (event) => {
             return Promise.all(
                 cacheNames.map((cache) => {
                     if (cache !== CACHE_NAME) {
+                        console.log("[ServiceWorker] cleanup: removed old cache " + cache)
                         return caches.delete(cache); //Deleting the cache
                     }
                 })
@@ -63,4 +67,5 @@ self.addEventListener('activate', (event) => {
         })
     );
 });
+
 
