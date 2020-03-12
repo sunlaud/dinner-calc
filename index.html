@@ -150,7 +150,7 @@
             To pay: <input class="with-icon" type="number" value='{{total}}' required min="1" step="1"><i class="icon fa" data-tooltip="Final price with all discounts applied (all guests)." data-tooltip-location="bottom"></i>
         </label>
         <p class="left clear">Discount ratio: {{formatNumber(discountRatio, 2)}}</p>
-        <p class="left payed" class-not-fully-payed="leftToPay > 0">{{leftToPay > 0 ? 'Underpayed' : 'Overpayed'}}: {{formatNumber(Math.abs(leftToPay), 1)}}</p>
+        <p class="left payed" class-not-fully-payed="leftToPay > 0">{{leftToPay > 0 ? 'Underpaid' : 'Overpaid'}}: {{formatNumber(Math.abs(leftToPay), 1)}}</p>
         {{#each persons}}
                 <fieldset class="clear">
                 <legend>Person {{name}}</legend>
